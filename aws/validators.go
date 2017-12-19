@@ -2007,3 +2007,42 @@ func validateAwsElastiCacheReplicationGroupAuthToken(v interface{}, k string) (w
 	}
 	return
 }
+
+func validateCognitoGroupName(v interface{}, k string) (ws []string, errors []error) {
+	value := v.(string)
+	if len(value) < 1 {
+		errors = append(errors, fmt.Errorf("%q cannot be less than 1 characters", k))
+	}
+
+	if len(value) > 128 {
+		errors = append(errors, fmt.Errorf("%q cannot be longer than 128 characters", k))
+	}
+
+	if !regexp.MustCompile(`[\p{L}\p{M}\p{S}\p{N}\p{P}]+`).MatchString(value) {
+		errors = append(errors, fmt.Errorf("%s must match [\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+", k))
+	}
+	return
+}
+
+func validateCognitoGroupPrecedence(v interface{}, k string) (ws []string, errors []error) {
+	if v.(int) < 0 {
+		errors = append(errors, fmt.Errorf("%q cannot be less than 0", k))
+	}
+	return
+}
+
+func validateCognitoGroupArn(v interface{}, k string) (ws []string, errors []error) {
+	value := v.(string)
+	if len(value) < 20 {
+		errors = append(errors, fmt.Errorf("%q cannot be less than 20 characters", k))
+	}
+
+	if len(value) > 2048 {
+		errors = append(errors, fmt.Errorf("%q cannot be more than 2048 characters", k))
+	}
+
+	if !regexp.MustCompile(`arn\:[\w+=/,.@-]+:[\w+=/,.@-]+:([\w+=/,.@-]*)?:[0-9]+:[\w+=/,.@-]+(:[\w+=/,.@-]+)?(:[\w+=/,.@-]+)?`).MatchString(value) {
+		errors = append(errors, fmt.Errorf("%q must match arn\\:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?", k))
+	}
+	return
+}
